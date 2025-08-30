@@ -49,6 +49,7 @@ This document is verified based on the following versions:
 
 1. Flutter: 3.7.12-ohos-1.0.6; SDK: 5.0.0(12); IDE: DevEco Studio: 5.0.13.200; ROM: 5.1.0.120 SP3;
 2. Flutter: 3.22.1-ohos-1.0.1; SDK: 5.0.0(12); IDE: DevEco Studio: 5.0.13.200; ROM: 5.1.0.120 SP3;
+3. Flutter: 3.27.5-ohos-0.1.1-Beta3; SDK: 5.0.0(12); IDE: DevEco Studio: 5.0.13.200; ROM: 5.1.0.120 SP3;
 
 ## 3. API
 
@@ -94,6 +95,7 @@ This document is verified based on the following versions:
 
 - [ ] ohos file picker selectMode setting does not work for folder
   selection: [issue#14](https://gitcode.com/openharmony-sig/fluttertpc_file_picker/issues/14).
+- [ ] When using flutter version 3.27 to reference this third-party library, you need to set a mandatory dependency on win32: ^5.0.0 in the project 'pubspec.yaml' file.
 
 ## 6. Others
 
