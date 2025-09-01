@@ -48,6 +48,7 @@ flutter pub get
 
 1. Flutter: 3.7.12-ohos-1.0.6; SDK: 5.0.0(12); IDE: DevEco Studio: 5.0.13.200; ROM: 5.1.0.120 SP3;
 2. Flutter: 3.22.1-ohos-1.0.1; SDK: 5.0.0(12); IDE: DevEco Studio: 5.0.13.200; ROM: 5.1.0.120 SP3;
+3. Flutter: 3.27.5-ohos-0.1.1-Beta3; SDK: 5.0.0(12); IDE: DevEco Studio: 5.0.13.200; ROM: 5.1.0.120 SP3;
 
 ## 3. API
 
@@ -91,9 +92,9 @@ flutter pub get
 
 ## 5. 遗留问题
 
-- [ ]  ohos 端 file picker selectMode
+- [ ] ohos 端 file picker selectMode
   设置选文件夹无效: [issue#14](https://gitcode.com/openharmony-sig/fluttertpc_file_picker/issues/14)
-
+- [ ] 使用 flutter 3.27 版本引用该三方库时，需要在工程依赖文中设强制依赖 win32: ^5.0.0
 ## 6. 其他
 
 ## 7. 开源协议
