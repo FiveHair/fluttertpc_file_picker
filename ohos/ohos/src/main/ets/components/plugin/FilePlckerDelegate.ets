@@ -302,7 +302,16 @@ export class FilePickerDelegate {
       return;
     }
     if (initialDirectory == null || initialDirectory.length == 0) {
-      this.finishWithError("需压保存文件目录为空", "请输入保存文件初始化目录");
+      this.finishWithError("initial Directory为空", "请输入保存文件初始化目录");
+      return;
+    }
+    try {
+      if (!fs.accessSync(initialDirectory)) {
+        this.finishWithError("您输入的文件路径不存在", "请重新输入文件的路径")
+        return;
+      }
+    } catch (error) {
+      console.error("访问文件时发生错误:",error)
     }
     if ((initialDirectory != null && initialDirectory.length != 0)) {
       let documentSaveOptions: picker.DocumentSaveOptions | null = null
