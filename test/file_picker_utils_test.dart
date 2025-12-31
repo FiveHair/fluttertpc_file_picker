@@ -1,4 +1,6 @@
 @TestOn('linux || mac-os')
+library;
+
 import 'dart:io';
 import 'package:file_picker/src/utils.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -104,7 +106,7 @@ void main() {
     });
 
     test(
-        'should tranform a list of file paths containing a path into a list of PlatformFiles',
+        'should transform a list of file paths containing a path into a list of PlatformFiles',
         () async {
       final filePaths = <String>['test'];
 

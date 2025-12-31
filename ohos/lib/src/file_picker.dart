@@ -156,7 +156,33 @@ abstract class FilePicker extends PlatformInterface {
     String? initialDirectory,
   }) async =>
       throw UnimplementedError('getDirectoryPath() has not been implemented.');
-
+  
+  /// Displays a dialog that allows the user to select both files and
+  /// directories simultaneously, returning their absolute paths.
+  ///
+  /// **Platform Support:** As of right now, this functionality is only
+  /// supported on macOS.
+  ///
+  /// [initialDirectory] can be optionally set to an absolute path to specify
+  /// where the dialog should open. On macOS the home directory shortcut (~/) is
+  /// not necessary and passing it will be ignored. On macOS if the
+  /// [initialDirectory] is invalid the user directory or previously valid
+  /// directory will be used.
+  ///
+  /// The file type filter [type] defaults to [FileType.any]. Optionally,
+  /// [allowedExtensions] might be provided (e.g. `["pdf", "svg", "jpg"]`).
+  ///
+  /// Returns a [Future<List<String>?>] that resolves to a list of absolute
+  /// paths for the selected files and directories. If the user cancels the
+  /// dialog or if the paths cannot be resolved, the method returns `null`.
+  Future<List<String>?> pickFileAndDirectoryPaths({
+    FileType type = FileType.any,
+    List<String>? allowedExtensions,
+	String? initialDirectory,
+  }) async =>
+      throw UnimplementedError('pickFileAndDirectoryPaths() has not been implemented.');
+	  
+	  
   /// Opens a save file dialog which lets the user select a file path and a file
   /// name to save a file.
   ///

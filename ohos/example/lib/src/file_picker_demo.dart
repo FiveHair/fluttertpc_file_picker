@@ -110,6 +110,36 @@ class _FilePickerDemoState extends State<FilePickerDemo> {
       setState(() => _isLoading = false);
     }
   }
+  
+  void _pickFileAndDirectoryPaths() async {
+    List<String>? pickedFilesAndDirectories;
+    bool hasUserAborted = true;
+    _resetState();
+
+    try {
+      pickedFilesAndDirectories =
+          await FilePicker.platform.pickFileAndDirectoryPaths(
+        type: _pickingType,
+        allowedExtensions: (_extension?.isNotEmpty ?? false)
+            ? _extension?.replaceAll(' ', '').split(',')
+            : null,
+        initialDirectory: _initialDirectoryController.text,
+      );
+      hasUserAborted = pickedFilesAndDirectories == null;
+    } on PlatformException catch (e) {
+      _logException('Unsupported operation: $e');
+    } catch (e) {
+      _logException(e.toString());
+    }
+    if (!mounted) return;
+    setState(() {
+      _isLoading = false;
+      _fileName =
+          _paths != null ? _paths!.map((e) => e.name).toString() : '...';
+      _userAborted = _paths == null;
+    });
+  }
+  
 
   Future<void> _saveFile() async {
     _resetState();
@@ -351,6 +381,14 @@ class _FilePickerDemoState extends State<FilePickerDemo> {
                           onPressed: () => _selectFolder(),
                           label: const Text('Pick folder'),
                           icon: const Icon(Icons.folder),
+                        ),
+                      ),
+					  SizedBox(
+                        width: 250,
+                        child: FloatingActionButton.extended(
+                          onPressed: () => _pickFileAndDirectoryPaths(),
+                          label: Text('Pick files and directories'),
+                          icon: const Icon(Icons.folder_open),
                         ),
                       ),
                       SizedBox(

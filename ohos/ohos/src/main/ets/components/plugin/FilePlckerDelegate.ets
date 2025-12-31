@@ -53,6 +53,8 @@ export class FilePickerDelegate {
   private context: common.UIAbilityContext | null = null;
   private audioSelectedUris: Array<string> = new Array
   private savaFilePath: Array<string> = new Array();
+  private bytes: Uint8Array | null = null;
+  private sourceFd: number = -1;
 
   constructor(uiAbility: UIAbility) {
     this.ability = uiAbility;
@@ -166,12 +168,13 @@ export class FilePickerDelegate {
         let documentPicker = new picker.DocumentViewPicker(commonContext);
         let documentSelectOptions = new picker.DocumentSelectOptions();
         documentSelectOptions.maxSelectNumber = this.isMultipleSelection ? 9 : 1;
-        documentPicker.select(documentSelectOptions).then((documentSelectResult: Array<string>) => {
+        documentPicker.select(documentSelectOptions).then(async (documentSelectResult: Array<string>) => {
           this.savaFilePath = documentSelectResult
           if (documentSelectResult == null || documentSelectResult.length == 0) {
             this.finishWithError("unknown_activity", "Unknown activity error, please fill an issue.");
           }
           let anySelectUris: Array<string> = documentSelectResult;
+          this.bytes = await this.readFileData(anySelectUris[0]);
           if (this.isMultipleSelection) {
             this.handlingMultipleResults(anySelectUris)
           } else {
@@ -301,19 +304,11 @@ export class FilePickerDelegate {
       this.finishWithAlreadyActiveError(result);
       return;
     }
-    if (initialDirectory == null || initialDirectory.length == 0) {
-      this.finishWithError("initial Directory为空", "请输入保存文件初始化目录");
-      return;
+    if (!this.bytes) {
+      this.finishWithError("", "Bytes are required on HarmonyOS & Android & IOS when saving a file");
     }
-    try {
-      if (!fs.accessSync(initialDirectory)) {
-        this.finishWithError("您输入的文件路径不存在", "请重新输入文件的路径")
-        return;
-      }
-    } catch (error) {
-      console.error("访问文件时发生错误:",error)
-    }
-    if ((initialDirectory != null && initialDirectory.length != 0)) {
+
+    if (this.bytes && this.bytes?.length > 0) {
       let documentSaveOptions: picker.DocumentSaveOptions | null = null
       documentSaveOptions = new picker.DocumentSaveOptions();
       documentSaveOptions.defaultFilePathUri = initialDirectory;
@@ -322,10 +317,38 @@ export class FilePickerDelegate {
       }
       let commonContext = this.ability?.context as common.UIAbilityContext;
       let documentPicker = new picker.DocumentViewPicker(commonContext);
-      documentSaveOptions.newFileNames = fileNameArray;
-      documentSaveOptions.defaultFilePathUri = initialDirectory
+      let sourceFileNameList: Array<string> = [];
+      // 通过选择文件的路径，获取文件名
+      for (const item of this.savaFilePath) {
+        const lastSlashIndex = item.lastIndexOf('/');
+        const sourceFileName = item.substring(lastSlashIndex + 1);
+        sourceFileNameList.push(sourceFileName);
+      }
+      if (this.savaFilePath && this.savaFilePath.length == 1) {
+        // fileNameArray是 Default File Name 输入框的内容，如果为空，拉起文件选择器之后输入框有后缀（通过源文件获得）
+        // documentSaveOptions.newFileNames是预设的文件名，拉起文件选择器自动显示在输入框中的
+        let filePath: string = '';
+        let hasExtension: boolean = hasFileExtension(filePath);
+        const lastSlashIndex = this.savaFilePath[0].lastIndexOf('/');
+        const sourceFileName = this.savaFilePath[0].substring(lastSlashIndex + 1);
+        const sourceExt = getExtension(sourceFileName);
+        if (!hasExtension) {
+          filePath = fileNameArray[0] + sourceExt;
+        } else {
+          filePath = fileNameArray[0]
+        }
+        documentSaveOptions.newFileNames = [filePath];
+      } else {
+        documentSaveOptions.newFileNames = sourceFileNameList;
+      }
       documentPicker.save(documentSaveOptions).then((documentSaveResult: Array<string>) => {
-        this.singSave(initialDirectory, documentSaveResult[0])
+        if (documentSaveResult && documentSaveResult.length == 1) {
+          // 如果在这个位置添加后缀，错误码: 13900002 错误信息: No such file or directory
+          this.singSave(documentSaveResult[0]);
+        } else {
+          //  选择多个文件后保存，只需要选择路径，不用添加文件名,重名自动加1
+          this.multipleSave(documentSaveResult);
+        }
         let originFileName = FileUtils.getFileName(documentSaveResult[0])
         let newFileName = FileUtils.urlDecodeManual(originFileName);
         let newSavePath = FileUtils.replaceFileName(documentSaveResult[0], originFileName, newFileName)
@@ -339,13 +362,51 @@ export class FilePickerDelegate {
       });
     }
   }
+  // 辅助函数：读取文件数据
+  private async readFileData(uri: string): Promise<Uint8Array> {
+    let fd: number | undefined;
+    try {
+      const file: fs.File = fs.openSync(uri, fs.OpenMode.READ_ONLY);
+      this.sourceFd = file.fd;
+      const stat = fs.statSync(file.fd);
+      const buffer = new ArrayBuffer(stat.size);
+      fs.readSync(this.sourceFd, buffer);
+      return new Uint8Array(buffer);
+    } finally {
+      if (fd !== undefined) {
+        fs.closeSync(fd);
+      }
+    }
+  }
 
-  singSave(savePath: string, photoSaveResult: string) {
-    let file = fs.openSync(savePath);
-    let file2 = fs.openSync(photoSaveResult, fs.OpenMode.READ_WRITE);
-    fs.copyFileSync(file.fd, file2.fd)
-    fs.close(file)
-    fs.close(file2)
+  multipleSave(photoSaveResultUri: Array<string>) {
+    let targetFd: number | undefined;
+    if (photoSaveResultUri.length > 1) {
+      for (const item of photoSaveResultUri) {
+        const targetFile: fs.File =
+          fs.openSync(item, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE | fs.OpenMode.TRUNC);
+        targetFd = targetFile.fd;
+        fs.writeSync(targetFd, this.bytes?.buffer);
+        fs.fsyncSync(targetFd); // 确保数据落盘
+      }
+    }
+  }
+
+  singSave(photoSaveResultUri: string) {
+    let targetFd: number | undefined;
+
+    try {
+      const targetFile: fs.File =
+        fs.openSync(photoSaveResultUri, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE | fs.OpenMode.TRUNC);
+      targetFd = targetFile.fd;
+      fs.writeSync(targetFd, this.bytes?.buffer);
+      fs.fsyncSync(targetFd); // 确保数据落盘
+    } catch (error) {
+      const e = error as BusinessError;
+      throw new Error(`savefile 文件复制失败: ${e.message}`);
+    } finally {
+      fs.closeSync(targetFd);
+    }
   }
 
   finishWithError(errorCode: string, errorMessage: string) {
@@ -455,4 +516,40 @@ class PermissionManagerClass implements PermissionManager {
       console.error('data:' + JSON.stringify(err));
     });
   }
+}
+
+/**
+ * 获取文件扩展名
+ */
+function getExtension(fileName: string): string {
+  const name = fileName.trim();
+  const lastDotIndex = name.lastIndexOf('.');
+  // 排除特殊情况
+  if (lastDotIndex <= 0 ||
+    lastDotIndex === name.length - 1 ||
+  name.startsWith('.')) {
+    return '';
+  }
+  // 返回包含点的扩展名（如 .txt、.jpg）
+  return name.substring(lastDotIndex).toLowerCase();
+}
+
+/**
+ * 判断路径是否包含扩展名
+ * @param filePath 文件路径
+ * @returns 是否包含扩展名
+ */
+function hasFileExtension(filePath: string): boolean {
+  if (!filePath || filePath.trim() === '') {
+    return false;
+  }
+  // 获取文件名（不包含路径）
+  const fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
+  // 排除没有文件名的情况
+  if (!fileName || fileName.trim() === '') {
+    return false;
+  }
+  // 查找最后一个点号的位置
+  const lastDotIndex = fileName.lastIndexOf('.');
+  return lastDotIndex > 0 && lastDotIndex < fileName.length - 1;
 }

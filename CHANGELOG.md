@@ -1,3 +1,246 @@
+## 10.3.8
+### iOS
+- Rename FileUtils to FilePickerUtils [#1921](https://github.com/miguelpruivo/flutter_file_picker/issues/1921)
+### Android
+- Restores the ms[df] URI handling logic in FileUtils.kt to fix file selection returning null on some devices.
+
+## 10.3.7
+### Android
+- Fixed an issue where file type filtering was not being applied correctly, now only displaying files that match the selected MIME types. [#1906](https://github.com/miguelpruivo/flutter_file_picker/pull/1906)
+
+## 10.3.6
+### Android
+- Added support for 16 KB page sizes. [#1888](https://github.com/miguelpruivo/flutter_file_picker/issues/1888)
+
+## 10.3.5
+### iOS
+- Fixed an error when loading large files (>= 2GB~).
+
+## 10.3.4
+### Android
+- Detect HEIC and HEIF extensions as valid image
+- Use compression format based file extension when compressing images.
+
+## 10.3.3
+### Android
+- Updated compileSdk to use flutter.compileSdkVersion. [#1842](https://github.com/miguelpruivo/flutter_file_picker/issues/1842)
+
+### Linux
+- Fixed an issue where initialDirectory was not working. [#1878](https://github.com/miguelpruivo/flutter_file_picker/issues/1878)
+
+## 10.3.2
+### Linux
+- Fixed an issue filtering files by extension on Linux. [#1870](https://github.com/miguelpruivo/flutter_file_picker/pull/1870) [@Decodetalkers](https://github.com/Decodetalkers)
+
+## 10.3.1
+### General
+- Fixed onFileLoading handler to process status changes only when data is a bool.
+
+## 10.3.0
+### Desktop
+- Support xdg desktop portal filechooser on linux. [#1827](https://github.com/miguelpruivo/flutter_file_picker/issues/1827) [@Decodetalkers](https://github.com/Decodetalkers)
+
+### Android
+- Fixed an issue where CSV files were not properly filtered during file selection. [#1849](https://github.com/miguelpruivo/flutter_file_picker/pull/1849) [@SoftWyer](https://github.com/SoftWyer)
+
+### Web
+- Introduced bool flag to control upload behavior on window blur. [#1833](https://github.com/miguelpruivo/flutter_file_picker/issues/1833) [@mugglmenzel](https://github.com/mugglmenzel)
+
+## 10.2.4
+### Android
+- Fixed an issue where custom MIME types were failing to load picking files on Chromebook. [#1858](https://github.com/miguelpruivo/flutter_file_picker/issues/1858) [@vicajilau](https://github.com/vicajilau)
+
+## 10.2.3
+### General
+- Fixed build failures on Flutter 3.24 caused by changes to address Win32 deprecation warnings on Windows. [#1855](https://github.com/miguelpruivo/flutter_file_picker/issues/1855) [@vicajilau](https://github.com/vicajilau)
+
+## 10.2.2
+### Android
+- Fixed an issue where some files would incorrectly append a `.txt` extension when saving files on Android. [@vicajilau](https://github.com/vicajilau)
+
+## 10.2.1
+### Android
+- Fixed an issue where the image upload would not display the loading indicator.
+
+## 10.2.0
+### Desktop
+- Added support for webp images on Desktop platforms. [#1491](https://github.com/miguelpruivo/flutter_file_picker/issues/1491)
+### Android
+- Fixed an issue where saving files was failing with some MimeTypes [#1789](https://github.com/miguelpruivo/flutter_file_picker/issues/1789), [#1818](https://github.com/miguelpruivo/flutter_file_picker/issues/1818), [#1819](https://github.com/miguelpruivo/flutter_file_picker/issues/1819) and [#1820](https://github.com/miguelpruivo/flutter_file_picker/issues/1820)
+
+## 10.1.9
+### Android
+- Fixed an issue when a folder is selected on an external storage [#1801](https://github.com/miguelpruivo/flutter_file_picker/issues/1801)
+
+## 10.1.8
+### Android
+- Fixed an issue when a folder is selected [#1802](https://github.com/miguelpruivo/flutter_file_picker/issues/1802)
+
+## 10.1.7
+### Web
+- Fixed a memory leak on the web.
+
+## 10.1.6
+### Android
+- Fixed an issue when you try to select more than one file[#1796](https://github.com/miguelpruivo/flutter_file_picker/issues/1796)
+- Fixed the app not filter correctly for the selected file types [#1792](https://github.com/miguelpruivo/flutter_file_picker/issues/1792)
+
+## 10.1.5
+### iOS
+- Fixed an app crash when calling `.saveFile` twice and cancelling the native save operation via the UI [#1626](https://github.com/miguelpruivo/flutter_file_picker/issues/1626) [@Leapward-Koex](https://github.com/Leapward-Koex)
+- Fixed a `.saveFile` future never completing when `.saveFile` is called twice without waiting for the first completion. [@Leapward-Koex](https://github.com/Leapward-Koex)
+
+## 10.1.4
+### Android
+- Fixed an issue where paths were loaded with duplicated endings. [#1767](https://github.com/miguelpruivo/flutter_file_picker/pull/1767)
+
+## 10.1.3
+### Android
+- Fixed an issue loading files. [#1777](https://github.com/miguelpruivo/flutter_file_picker/pull/1777)
+
+## 10.1.2
+### Android
+- Improved mimetype detection. [@vicajilau](https://github.com/vicajilau)
+
+## 10.1.1
+### Android
+- Migrated Android code base from Java to Kotlin.
+- Fixed an issue where compressed images were always saved as JPEG files. [#1738](https://github.com/miguelpruivo/flutter_file_picker/pull/1753)[@vicajilau](https://github.com/vicajilau)
+- Fixed an issue where files without extension were not saved properly. [@vicajilau](https://github.com/vicajilau)
+### iOS
+- Fixed an issue where `compressionQuality` on iOS was not loaded properly. [#1761](https://github.com/miguelpruivo/flutter_file_picker/pull/1761)
+
+## 10.1.0
+### Desktop (macOS)
+- Introduced a new method, `pickFileAndDirectoryPaths()`, which displays a dialog enabling users to select both files and directories simultaneously. The method returns their absolute paths. Only available for macOS.
+
+## 10.0.0
+### General
+- **BREAKING CHANGE:** The `compressionQuality` property in the `pickFiles` method now defaults to `0`.
+- **BREAKING CHANGE:** The `allowCompression` property has been deprecated in favor of `compressionQuality`, and now defaults to `false`.
+
+### Android
+- Fixed a permission denied exception on Android 11 or lower when `compressionQuality` is not `0`. ([#1742](https://github.com/miguelpruivo/flutter_file_picker/issues/1742)). [@vicajilau](https://github.com/vicajilau)
+- Fixed an issue where images were duplicated to the "Pictures" folder on Android. ([#1743](https://github.com/miguelpruivo/flutter_file_picker/issues/1743)) [@vicajilau](https://github.com/vicajilau)
+
+## 9.2.3
+### Desktop (macOS)
+- Fixed an issue when the active viewController is not a FlutterViewController.
+
+## 9.2.2
+### Desktop (macOS)
+- Updated the file picker to check for missing entitlements, instead of failing silently. [@vicajilau](https://github.com/vicajilau).
+
+## 9.2.1
+### Desktop (macOS)
+- Present file picker panel as a sheet modal to the Flutter application window. [#1734](https://github.com/miguelpruivo/flutter_file_picker/pull/1734)
+
+## 9.2.0
+### Desktop (macOS, Windows, Linux)
+- Fixes an inconsistency for saveFile that did not save the file, when bytes are provided on desktop platforms. [@vicajilau](https://github.com/vicajilau).
+
+## 9.1.0
+### Web
+- Added an implementation for `saveFile()` on the web. [@vicajilau](https://github.com/vicajilau).
+
+## 9.0.3
+### Android
+- Added ProGuard consumer rules to automatically exclude `androidx.lifecycle.DefaultLifecycleObserver` from obfuscation.
+
+## 9.0.2
+### Android
+- Fixes: File streams not getting closed.
+
+## 9.0.1
+### Windows
+- Move `getDirectoryPath()` to its own isolate to avoid COM initialization conflicts with other plugins [#1713](https://github.com/miguelpruivo/flutter_file_picker/pull/1713) [@tguerin](https://github.com/tguerin). 
+
+## 9.0.0
+### Web
+- **BREAKING CHANGE:** `pickFiles()` now loads files as blobs. See the note in the updated [wiki](https://github.com/miguelpruivo/flutter_file_picker/wiki/api#-pickfiles)
+
+## 8.3.7
+### Android
+- Updated example project Android sources. [@vicajilau](https://github.com/vicajilau)
+
+## 8.3.6
+### General
+- Added compatibility with Flutter 3.29. [@vicajilau](https://github.com/vicajilau).
+
+### Desktop (Windows)
+- Fixes the issue under Windows that could be raised when another plugin uses `CoInitializeEx` and the File Explorer windows doesn't popup. [#1708](https://github.com/miguelpruivo/flutter_file_picker/pull/1708)
+
+## 8.3.5
+### Android
+- Fixes allowCompression not working on Android. [1633](https://github.com/miguelpruivo/flutter_file_picker/issues/1633)
+
+## 8.3.4
+### Android
+- Fix: Handle Null Byte Array in saveFile Method [#1662](https://github.com/miguelpruivo/flutter_file_picker/issues/1662) [@vicajilau](https://github.com/vicajilau).
+
+## 8.3.3
+### General
+- Updates flutter_plugin_android_lifecycle, ffi, path, win32, cross_file and web dependencies [@vicajilau](https://github.com/vicajilau).
+- Updates CI/CD with new dependencies [@vicajilau](https://github.com/vicajilau).
+
+## 8.3.2
+### Android
+- Fix pickFiles for Android with launchMode=singleInstance [#1700](https://github.com/miguelpruivo/flutter_file_picker/issues/1700), [#1404](https://github.com/miguelpruivo/flutter_file_picker/issues/1404)
+
+## 8.3.1
+### iOS
+- Fix [1367](https://github.com/miguelpruivo/flutter_file_picker/issues/1367)
+
+## 8.3.0
+### Desktop (macOS) && iOS
+- Adds support for Swift Package Manager for compatibility with new projects [#1582](https://github.com/miguelpruivo/flutter_file_picker/issues/1582)
+
+## 8.2.0
+### Desktop (macOS)
+- Reimplement macOS file picker using method channels (fixes [#1492](https://github.com/miguelpruivo/flutter_file_picker/issues/1492), [#1445](https://github.com/miguelpruivo/flutter_file_picker/issues/1445), [#1674](https://github.com/miguelpruivo/flutter_file_picker/issues/1674), [#1685](https://github.com/miguelpruivo/flutter_file_picker/issues/1685))
+- **BREAKING CHANGE:** `pickFiles()` now requires the `com.apple.security.files.user-selected.read-only` entitlement on macOS. Without this entitlement, the file picker will not open, and the method will return `null`. See the note in the updated [wiki](https://github.com/miguelpruivo/flutter_file_picker/wiki/Setup#macos)
+
+## 8.1.7
+### iOS 
+- Fix Image Picker to Handle Partial Failures Gracefully [#1554](https://github.com/miguelpruivo/flutter_file_picker/issues/1554)
+
+## 8.1.6
+### Android
+- Fix Android compile error [#1643](https://github.com/miguelpruivo/flutter_file_picker/issues/1643)
+
+## 8.1.5
+### Android
+- Fix [#872](https://github.com/miguelpruivo/flutter_file_picker/issues/872) by removing unnecessary external storage permission
+
+## 8.1.4
+### iOS
+- Fixes a crash when sometimes user swipe the modal down and call it again. [1357](https://github.com/miguelpruivo/flutter_file_picker/issues/1357)
+
+## 8.1.3
+### Android
+- Fixes a null object reference error [#1604](https://github.com/miguelpruivo/flutter_file_picker/issues/1604)
+
+## 8.1.2
+### Android
+- Fixes a cache deletion issue [#1505](https://github.com/miguelpruivo/flutter_file_picker/issues/1505)
+
+## 8.1.1
+### Web
+- Migrate the web example to use the new web bootstrapping, introduced in Flutter 3.22.
+
+## 8.1.0
+### General
+- Updates the minimum Flutter version to 3.22.0, to support Dart 3.4.
+
+### Web
+- Updates the `package:web` dependency to 1.0.0.
+- Removes a redundant `FilePickerWeb.platform` static field. Use `FilePicker.platform` instead.
+
+## 8.0.7
+### General
+- Fixes an issue relating to incorrect registration of platform-specific implementations. [#1555](https://github.com/miguelpruivo/flutter_file_picker/issues/1555).
+- Fixes an issue that required users to use `kIsWeb` and `FilePickerWeb` when running on the web.
+
 ## 8.0.6
 ### Android
 Updates the minimum Android SDK version to 21, to match the current Flutter minimum Android SDK version. Fixes [#1522](https://github.com/miguelpruivo/flutter_file_picker/issues/1522), [#1528](https://github.com/miguelpruivo/flutter_file_picker/issues/1528), and [#1531](https://github.com/miguelpruivo/flutter_file_picker/issues/1531). Thanks @navaronbracke.
