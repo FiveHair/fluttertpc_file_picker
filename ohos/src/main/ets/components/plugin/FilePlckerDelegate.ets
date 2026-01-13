@@ -64,8 +64,7 @@ export class FilePickerDelegate {
     allowedExtensions: string[] | null | undefined,
     result: MethodResult) {
     if (!this.setPendingMethodCallAndResult(result)) {
-      this.finishWithAlreadyActiveError(result as MethodResult);
-      return;
+      await this.cancelOperation();
     }
     this.type = type;
     this.isMultipleSelection = isMultipleSelection;
@@ -85,19 +84,22 @@ export class FilePickerDelegate {
         let photoSelectOptions = new picker.PhotoSelectOptions();
         photoSelectOptions.MIMEType = picker.PhotoViewMIMETypes.IMAGE_TYPE;
         photoSelectOptions.maxSelectNumber = this.isMultipleSelection ? 9 : 1;
-        await photoPicker.select(photoSelectOptions).then((photoSelectResult) => {
-
+        await photoPicker.select(photoSelectOptions).then(async (photoSelectResult) => {
           this.savaFilePath = photoSelectResult.photoUris
           if (photoSelectResult == null || photoSelectResult.photoUris.length == 0) {
-            this.finishWithError("unknown_activity", "Unknown activity error, please fill an issue.");
+            await this.cancelOperation();
           }
+          this.bytes = await this.readFileData(photoSelectResult.photoUris[0]);
           if (this.isMultipleSelection) {
             this.handlingMultipleResults(photoSelectResult.photoUris)
           } else {
             this.handleSingleResult(photoSelectResult.photoUris[0]);
           }
+          if (photoSelectResult == null || photoSelectResult.photoUris.length == 0) {
+            await this.cancelOperation();
+          }
         }).catch((error: BusinessError) => {
-          this.finishWithError("unknown_activity", "Unknown activity error, please fill an issue.");
+          console.error('PhotoViewPicker.select failed with err: ' + JSON.stringify(error));
         })
         break;
       }
@@ -106,19 +108,23 @@ export class FilePickerDelegate {
         let photoSelectOptions = new picker.PhotoSelectOptions();
         photoSelectOptions.maxSelectNumber = this.isMultipleSelection ? 9 : 1;
         photoSelectOptions.MIMEType = picker.PhotoViewMIMETypes.VIDEO_TYPE;
-        photoPicker.select(photoSelectOptions).then((photoSelectResult) => {
+        photoPicker.select(photoSelectOptions).then(async (photoSelectResult) => {
           this.savaFilePath = photoSelectResult.photoUris
           if (photoSelectResult == null || photoSelectResult.photoUris.length == 0) {
-            this.finishWithError("unknown_activity", "Unknown activity error, please fill an issue.");
+            await this.cancelOperation();
           }
           let selectedUris: Array<string> = photoSelectResult.photoUris;
+          this.bytes = await this.readFileData(selectedUris[0]);
           if (this.isMultipleSelection) {
             this.handlingMultipleResults(selectedUris)
           } else {
             this.handleSingleResult(selectedUris[0]);
           }
+          if (photoSelectResult == null || photoSelectResult.photoUris.length == 0) {
+            await this.cancelOperation();
+          }
         }).catch((error: BusinessError) => {
-          this.finishWithError("unknown_activity", "Unknown activity error, please fill an issue.");
+          console.error('PhotoViewPicker.select failed with err: ' + JSON.stringify(error));
         })
         break;
       }
@@ -127,18 +133,22 @@ export class FilePickerDelegate {
         let audioPicker: picker.AudioViewPicker = new picker.AudioViewPicker(context);
         let audioSelectOptions = new picker.AudioSelectOptions();
         audioSelectOptions.maxSelectNumber = this.isMultipleSelection ? 9 : 1;
-        audioPicker.select(audioSelectOptions).then((audioSelectResult) => {
-          this.savaFilePath = audioSelectResult
+        audioPicker.select(audioSelectOptions).then(async (audioSelectResult) => {
+          this.savaFilePath = audioSelectResult;
           if (audioSelectResult == null || audioSelectResult.length == 0) {
-            this.finishWithError("unknown_activity", "Unknown activity error, please fill an issue.");
+            await this.cancelOperation();
           }
+          this.bytes = await this.readFileData(audioSelectResult[0]);
           if (this.isMultipleSelection) {
             this.handlingMultipleResults(audioSelectResult);
           } else {
             this.handleSingleResult(audioSelectResult[0]);
           }
+          if (audioSelectResult == null || audioSelectResult.length == 0) {
+            await this.cancelOperation();
+          }
         }).catch((error: BusinessError) => {
-          this.finishWithError("unknown_activity", "Unknown activity error, please fill an issue.");
+          console.error('AudioViewPicker.select failed with err: ' + JSON.stringify(error));
         })
         break
       }
@@ -147,19 +157,23 @@ export class FilePickerDelegate {
         let photoSelectOptions = new photoAccessHelper.PhotoSelectOptions();
         photoSelectOptions.maxSelectNumber = this.isMultipleSelection ? 9 : 1;
         photoSelectOptions.MIMEType = this.resolveType(this.type) as photoAccessHelper.PhotoViewMIMETypes;
-        photoPicker.select(photoSelectOptions).then((photoSelectResult) => {
-          this.savaFilePath = photoSelectResult.photoUris
+        photoPicker.select(photoSelectOptions).then(async (photoSelectResult) => {
+          this.savaFilePath = photoSelectResult.photoUris;
           let selectedUris: Array<string> = photoSelectResult.photoUris;
           if (selectedUris == null || selectedUris.length == 0) {
-            this.finishWithError("unknown_activity", "Unknown activity error, please fill an issue.");
+            await this.cancelOperation();
           }
+          this.bytes = await this.readFileData(selectedUris[0]);
           if (this.isMultipleSelection) {
             this.handlingMultipleResults(selectedUris)
           } else {
             this.handleSingleResult(selectedUris[0]);
           }
+          if (selectedUris == null || selectedUris.length == 0) {
+            await this.cancelOperation();
+          }
         }).catch((error: BusinessError) => {
-          this.finishWithError("unknown_activity", "Unknown activity error, please fill an issue.");
+          console.error('PhotoViewPicker.select failed with err: ' + JSON.stringify(error));
         })
         break;
       }
@@ -171,7 +185,7 @@ export class FilePickerDelegate {
         documentPicker.select(documentSelectOptions).then(async (documentSelectResult: Array<string>) => {
           this.savaFilePath = documentSelectResult
           if (documentSelectResult == null || documentSelectResult.length == 0) {
-            this.finishWithError("unknown_activity", "Unknown activity error, please fill an issue.");
+            await this.cancelOperation();
           }
           let anySelectUris: Array<string> = documentSelectResult;
           this.bytes = await this.readFileData(anySelectUris[0]);
@@ -181,7 +195,7 @@ export class FilePickerDelegate {
             this.handleSingleResult(anySelectUris[0]);
           }
           if (documentSelectResult == null || documentSelectResult.length == 0) {
-            this.finishWithError("unknown_activity", "Unknown activity error, please fill an issue.");
+            await this.cancelOperation();
           }
         }).catch((err: BusinessError) => {
           console.error('DocumentViewPicker.select failed with err: ' + JSON.stringify(err));
@@ -194,19 +208,20 @@ export class FilePickerDelegate {
         let documentPicker = new picker.DocumentViewPicker(commonContext);
         documentSelectOptions.maxSelectNumber = this.isMultipleSelection ? 9 : 1;
         documentSelectOptions.fileSuffixFilters = this.allowedExtensions;
-        documentPicker.select(documentSelectOptions).then((documentSelectResult: Array<string>) => {
+        documentPicker.select(documentSelectOptions).then(async (documentSelectResult: Array<string>) => {
           this.savaFilePath = documentSelectResult;
           let anySelectUris: Array<string> = documentSelectResult;
           if (documentSelectResult == null || documentSelectResult.length == 0) {
-            this.finishWithError("unknown_activity", "Unknown activity error, please fill an issue.");
+            await this.cancelOperation();
           }
+          this.bytes = await this.readFileData(anySelectUris[0]);
           if (this.isMultipleSelection) {
             this.handlingMultipleResults(anySelectUris)
           } else {
             this.handleSingleResult(anySelectUris[0]);
           }
           if (documentSelectResult == null || documentSelectResult.length == 0) {
-            this.finishWithError("unknown_activity", "Unknown activity error, please fill an issue.");
+            await this.cancelOperation();
           }
         }).catch((err: BusinessError) => {
           console.error('DocumentViewPicker.select failed with err: ' + JSON.stringify(err));
@@ -219,18 +234,19 @@ export class FilePickerDelegate {
         let documentSelectOptions: picker.DocumentSelectOptions = {
           selectMode: 1
         }
-        documentPicker.select(documentSelectOptions).then((documentSelectResult: Array<string>) => {
+        documentPicker.select(documentSelectOptions).then(async (documentSelectResult: Array<string>) => {
           if (documentSelectResult == null || documentSelectResult.length == 0) {
-            this.finishWithError("unknown_activity", "Unknown activity error, please fill an issue.");
+            await this.cancelOperation();
           }
           let anySelectUris: Array<string> = documentSelectResult;
+          this.bytes = await this.readFileData(anySelectUris[0]);
           if (this.isMultipleSelection) {
             this.handlingMultipleResults(anySelectUris)
           } else {
             this.handleSingleResult(anySelectUris[0]);
           }
           if (documentSelectResult == null || documentSelectResult.length == 0) {
-            this.finishWithError("unknown_activity", "Unknown activity error, please fill an issue.");
+            await this.cancelOperation();
           }
         }).catch((err: BusinessError) => {
           console.error('DocumentViewPicker.select failed with err: ' + JSON.stringify(err));
@@ -341,8 +357,10 @@ export class FilePickerDelegate {
       } else {
         documentSaveOptions.newFileNames = sourceFileNameList;
       }
-      documentPicker.save(documentSaveOptions).then((documentSaveResult: Array<string>) => {
-        if (documentSaveResult && documentSaveResult.length == 1) {
+      documentPicker.save(documentSaveOptions).then(async (documentSaveResult: Array<string>) => {
+        if (documentSaveResult == null || documentSaveResult.length == 0) {
+          await this.cancelOperation();
+        } else if (documentSaveResult && documentSaveResult.length == 1) {
           // 如果在这个位置添加后缀，错误码: 13900002 错误信息: No such file or directory
           this.singSave(documentSaveResult[0]);
         } else {
@@ -407,6 +425,12 @@ export class FilePickerDelegate {
     } finally {
       fs.closeSync(targetFd);
     }
+  }
+
+  private async cancelOperation(){
+    this.pendingResult?.success(null);
+    this.clearPendingResult();
+    return;
   }
 
   finishWithError(errorCode: string, errorMessage: string) {
@@ -517,7 +541,6 @@ class PermissionManagerClass implements PermissionManager {
     });
   }
 }
-
 /**
  * 获取文件扩展名
  */
