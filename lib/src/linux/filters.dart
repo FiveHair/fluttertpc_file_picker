@@ -1,4 +1,4 @@
-import 'package:file_picker/src/file_picker.dart';
+import 'package:file_picker_ohos/src/file_picker.dart';
 import 'package:dbus/dbus.dart';
 
 typedef FilterInfo = Map<String, List<(int, String)>>;

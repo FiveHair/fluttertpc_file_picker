@@ -6,6 +6,7 @@
   "author": "",
   "license": "",
   "dependencies": {
-    "file_picker_ohos": "file:../har/file_picker_ohos.har"
+    "file_picker_ohos": "file:../har/file_picker_ohos.har",
+    "@ohos/flutter_ohos": "har/flutter.har"
   }
 }

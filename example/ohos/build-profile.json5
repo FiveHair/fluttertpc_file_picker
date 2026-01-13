@@ -1,6 +1,7 @@
 {
   "app": {
-    "signingConfigs": [],
+    "signingConfigs": [
+    ],
     "products": [
       {
         "name": "default",
@@ -14,18 +15,6 @@
     {
       "name": "entry",
       "srcPath": "./entry",
-      "targets": [
-        {
-          "name": "default",
-          "applyToProducts": [
-            "default"
-          ]
-        }
-      ]
-    },
-    {
-      "name": "file_picker_ohos",
-      "srcPath": "../../ohos",
       "targets": [
         {
           "name": "default",

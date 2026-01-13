@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
+import 'package:file_picker_ohos/file_picker_ohos.dart';
 import 'package:flutter/services.dart';
 
 final MethodChannel _channel = MethodChannel(
@@ -32,10 +32,10 @@ class FilePickerIO extends FilePicker {
     Function(FilePickerStatus)? onFileLoading,
     @Deprecated(
         'allowCompression is deprecated and has no effect. Use compressionQuality instead.')
-    bool? allowCompression = false,
+    bool? allowCompression = true,
     bool allowMultiple = false,
     bool? withData = false,
-    int compressionQuality = 0,
+    int compressionQuality = 30,
     bool? withReadStream = false,
     bool lockParentWindow = false,
     bool readSequential = false,
@@ -149,7 +149,9 @@ class FilePickerIO extends FilePicker {
       List<String>? allowedExtensions,
       Uint8List? bytes,
       bool lockParentWindow = false}) {
-    if (Platform.isIOS || Platform.isAndroid) {
+    if (Platform.isIOS ||
+        Platform.isAndroid ||
+        Platform.operatingSystem == "ohos") {
       if (bytes == null) {
         throw ArgumentError(
             'Bytes are required on Android & iOS when saving a file.');

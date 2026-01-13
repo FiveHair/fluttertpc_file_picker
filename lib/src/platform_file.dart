@@ -1,17 +1,19 @@
 import 'dart:async';
+// ignore: unnecessary_import
+import 'dart:typed_data';
 
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter/foundation.dart';
 
 class PlatformFile {
   PlatformFile({
-    this.path,
+    String? path,
     required this.name,
     required this.size,
     this.bytes,
     this.readStream,
     this.identifier,
-  });
+  }) : _path = path;
 
   factory PlatformFile.fromMap(Map data, {Stream<List<int>>? readStream}) {
     return PlatformFile(
@@ -29,9 +31,21 @@ class PlatformFile {
   /// ```
   /// final File myFile = File(platformFile.path);
   /// ```
-  /// On web the path points to a Blob URL, if present, which can be cleaned up using [URL.revokeObjectURL](https://pub.dev/documentation/web/latest/web/URL/revokeObjectURL.html).
+  /// On web this is always `null`. You should access `bytes` property instead.
   /// Read more about it [here](https://github.com/miguelpruivo/flutter_file_picker/wiki/FAQ)
-  final String? path;
+  String? _path;
+
+  String? get path {
+    if (kIsWeb) {
+      /// https://github.com/miguelpruivo/flutter_file_picker/issues/751
+      throw '''
+      On web `path` is unavailable and accessing it causes this exception.
+      You should access `bytes` property instead,
+      Read more about it [here](https://github.com/miguelpruivo/flutter_file_picker/wiki/FAQ)
+      ''';
+    }
+    return _path;
+  }
 
   /// File name including its extension.
   final String name;
@@ -75,7 +89,7 @@ class PlatformFile {
     }
 
     return other is PlatformFile &&
-        other.path == path &&
+        (kIsWeb || other.path == path) &&
         other.name == name &&
         other.bytes == bytes &&
         other.readStream == readStream &&

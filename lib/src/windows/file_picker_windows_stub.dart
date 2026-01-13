@@ -1,4 +1,4 @@
-import 'package:file_picker/file_picker.dart';
+import 'package:file_picker_ohos/file_picker_ohos.dart';
 
 class FilePickerWindows extends FilePicker {
   /// Errors on attempted instantiation of the stub. It exists only to satisfy
