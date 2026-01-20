@@ -53,7 +53,7 @@ export class FilePickerDelegate {
   private context: common.UIAbilityContext | null = null;
   private audioSelectedUris: Array<string> = new Array
   private savaFilePath: Array<string> = new Array();
-  private bytes: Uint8Array | null = null;
+  private bytesList: Uint8Array[] = [];
   private sourceFd: number = -1;
 
   constructor(uiAbility: UIAbility) {
@@ -89,7 +89,13 @@ export class FilePickerDelegate {
           if (photoSelectResult == null || photoSelectResult.photoUris.length == 0) {
             await this.cancelOperation();
           }
-          this.bytes = await this.readFileData(photoSelectResult.photoUris[0]);
+          //this.bytes = await this.readFileData(photoSelectResult.photoUris[0]);
+           // 逐个读取文件数据
+           this.bytesList = [];
+            for (const uri of photoSelectResult.photoUris) {
+              const bytes = await this.readFileData(uri);
+              this.bytesList.push(bytes);
+            }
           if (this.isMultipleSelection) {
             this.handlingMultipleResults(photoSelectResult.photoUris)
           } else {
@@ -114,7 +120,12 @@ export class FilePickerDelegate {
             await this.cancelOperation();
           }
           let selectedUris: Array<string> = photoSelectResult.photoUris;
-          this.bytes = await this.readFileData(selectedUris[0]);
+          //this.bytes = await this.readFileData(selectedUris[0]);
+          this.bytesList = [];
+          for (const uri of selectedUris) {
+             const bytes = await this.readFileData(uri);
+             this.bytesList.push(bytes);
+          }
           if (this.isMultipleSelection) {
             this.handlingMultipleResults(selectedUris)
           } else {
@@ -138,7 +149,12 @@ export class FilePickerDelegate {
           if (audioSelectResult == null || audioSelectResult.length == 0) {
             await this.cancelOperation();
           }
-          this.bytes = await this.readFileData(audioSelectResult[0]);
+          //this.bytes = await this.readFileData(audioSelectResult[0]);
+          this.bytesList = [];
+          for (const uri of audioSelectResult) {
+            const bytes = await this.readFileData(uri);
+            this.bytesList.push(bytes);
+          }
           if (this.isMultipleSelection) {
             this.handlingMultipleResults(audioSelectResult);
           } else {
@@ -163,7 +179,12 @@ export class FilePickerDelegate {
           if (selectedUris == null || selectedUris.length == 0) {
             await this.cancelOperation();
           }
-          this.bytes = await this.readFileData(selectedUris[0]);
+          //this.bytes = await this.readFileData(selectedUris[0]);
+          this.bytesList = [];
+          for (const uri of selectedUris) {
+            const bytes = await this.readFileData(uri);
+            this.bytesList.push(bytes);
+          }
           if (this.isMultipleSelection) {
             this.handlingMultipleResults(selectedUris)
           } else {
@@ -188,7 +209,12 @@ export class FilePickerDelegate {
             await this.cancelOperation();
           }
           let anySelectUris: Array<string> = documentSelectResult;
-          this.bytes = await this.readFileData(anySelectUris[0]);
+          //this.bytes = await this.readFileData(anySelectUris[0]);
+          this.bytesList = [];
+          for (const uri of anySelectUris) {
+            const bytes = await this.readFileData(uri);
+            this.bytesList.push(bytes);
+          }
           if (this.isMultipleSelection) {
             this.handlingMultipleResults(anySelectUris)
           } else {
@@ -214,7 +240,12 @@ export class FilePickerDelegate {
           if (documentSelectResult == null || documentSelectResult.length == 0) {
             await this.cancelOperation();
           }
-          this.bytes = await this.readFileData(anySelectUris[0]);
+          //this.bytes = await this.readFileData(anySelectUris[0]);
+          this.bytesList = [];
+          for (const uri of anySelectUris) {
+            const bytes = await this.readFileData(uri);
+            this.bytesList.push(bytes);
+          }
           if (this.isMultipleSelection) {
             this.handlingMultipleResults(anySelectUris)
           } else {
@@ -239,7 +270,12 @@ export class FilePickerDelegate {
             await this.cancelOperation();
           }
           let anySelectUris: Array<string> = documentSelectResult;
-          this.bytes = await this.readFileData(anySelectUris[0]);
+          //this.bytes = await this.readFileData(anySelectUris[0]);
+          this.bytesList = [];
+          for (const uri of anySelectUris) {
+            const bytes = await this.readFileData(uri);
+            this.bytesList.push(bytes);
+          }
           if (this.isMultipleSelection) {
             this.handlingMultipleResults(anySelectUris)
           } else {
@@ -320,11 +356,11 @@ export class FilePickerDelegate {
       this.finishWithAlreadyActiveError(result);
       return;
     }
-    if (!this.bytes) {
+    if (!this.bytesList) {
       this.finishWithError("", "Bytes are required on HarmonyOS & Android & IOS when saving a file");
     }
 
-    if (this.bytes && this.bytes?.length > 0) {
+    if (this.bytesList && this.bytesList?.length > 0) {
       let documentSaveOptions: picker.DocumentSaveOptions | null = null
       documentSaveOptions = new picker.DocumentSaveOptions();
       documentSaveOptions.defaultFilePathUri = initialDirectory;
@@ -359,6 +395,7 @@ export class FilePickerDelegate {
       }
       documentPicker.save(documentSaveOptions).then(async (documentSaveResult: Array<string>) => {
         if (documentSaveResult == null || documentSaveResult.length == 0) {
+          //this.finishWithError("invalid_format_type","Can1t handle the provided file_type");//用例保持一致
           await this.cancelOperation();
         } else if (documentSaveResult && documentSaveResult.length == 1) {
           // 如果在这个位置添加后缀，错误码: 13900002 错误信息: No such file or directory
@@ -400,11 +437,11 @@ export class FilePickerDelegate {
   multipleSave(photoSaveResultUri: Array<string>) {
     let targetFd: number | undefined;
     if (photoSaveResultUri.length > 1) {
-      for (const item of photoSaveResultUri) {
+      for (let i = 0; i < photoSaveResultUri.length; i++) {
         const targetFile: fs.File =
-          fs.openSync(item, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE | fs.OpenMode.TRUNC);
+          fs.openSync(photoSaveResultUri[i], fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE | fs.OpenMode.TRUNC);
         targetFd = targetFile.fd;
-        fs.writeSync(targetFd, this.bytes?.buffer);
+        fs.writeSync(targetFd, this.bytesList[i]?.buffer);
         fs.fsyncSync(targetFd); // 确保数据落盘
       }
     }
@@ -417,7 +454,7 @@ export class FilePickerDelegate {
       const targetFile: fs.File =
         fs.openSync(photoSaveResultUri, fs.OpenMode.READ_WRITE | fs.OpenMode.CREATE | fs.OpenMode.TRUNC);
       targetFd = targetFile.fd;
-      fs.writeSync(targetFd, this.bytes?.buffer);
+      fs.writeSync(targetFd, this.bytesList[0]?.buffer);
       fs.fsyncSync(targetFd); // 确保数据落盘
     } catch (error) {
       const e = error as BusinessError;
