@@ -1,5 +1,5 @@
 import 'package:cross_file/cross_file.dart';
-import 'package:file_picker/src/platform_file.dart';
+import 'package:file_picker_ohos/src/platform_file.dart';
 import 'package:flutter/foundation.dart';
 
 class FilePickerResult {

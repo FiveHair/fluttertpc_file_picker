@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:file_picker/file_picker.dart';
+import 'package:file_picker_ohos/file_picker_ohos.dart';
 import 'package:path/path.dart';
 
 Future<List<PlatformFile>> filePathsToPlatformFiles(
@@ -62,6 +62,13 @@ Future<String> isExecutableOnPath(String executable) async {
     );
   }
   return path;
+}
+
+Future<void> saveBytesToFile(Uint8List? bytes, String? path) async {
+  if (path != null && bytes != null && bytes.isNotEmpty) {
+    final file = File(path);
+    await file.writeAsBytes(bytes);
+  }
 }
 
 bool isAlpha(String x) {

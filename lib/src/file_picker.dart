@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:file_picker/src/file_picker_io.dart';
-import 'package:file_picker/src/file_picker_macos.dart';
-import 'package:file_picker/src/file_picker_result.dart';
-import 'package:file_picker/src/linux/file_picker_linux.dart';
-import 'package:file_picker/src/windows/stub.dart'
-    if (dart.library.io) 'package:file_picker/src/windows/file_picker_windows.dart';
+import 'package:file_picker_ohos/src/file_picker_io.dart';
+import 'package:file_picker_ohos/src/file_picker_macos.dart';
+import 'package:file_picker_ohos/src/file_picker_result.dart';
+import 'package:file_picker_ohos/src/linux/file_picker_linux.dart';
+import 'package:file_picker_ohos/src/windows/stub.dart'
+    if (dart.library.io) 'package:file_picker_ohos/src/windows/file_picker_windows.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 const String defaultDialogTitle = '';
@@ -48,7 +48,9 @@ abstract class FilePicker extends PlatformInterface {
   }
 
   factory FilePicker._setPlatform() {
-    if (Platform.isAndroid || Platform.isIOS) {
+    if (Platform.isAndroid ||
+        Platform.isIOS ||
+        Platform.operatingSystem == "ohos") {
       return FilePickerIO();
     } else if (Platform.isLinux) {
       return FilePickerLinux();
@@ -156,6 +158,32 @@ abstract class FilePicker extends PlatformInterface {
     String? initialDirectory,
   }) async =>
       throw UnimplementedError('getDirectoryPath() has not been implemented.');
+
+  /// Displays a dialog that allows the user to select both files and
+  /// directories simultaneously, returning their absolute paths.
+  ///
+  /// **Platform Support:** As of right now, this functionality is only
+  /// supported on macOS.
+  ///
+  /// [initialDirectory] can be optionally set to an absolute path to specify
+  /// where the dialog should open. On macOS the home directory shortcut (~/) is
+  /// not necessary and passing it will be ignored. On macOS if the
+  /// [initialDirectory] is invalid the user directory or previously valid
+  /// directory will be used.
+  ///
+  /// The file type filter [type] defaults to [FileType.any]. Optionally,
+  /// [allowedExtensions] might be provided (e.g. `["pdf", "svg", "jpg"]`).
+  ///
+  /// Returns a [Future<List<String>?>] that resolves to a list of absolute
+  /// paths for the selected files and directories. If the user cancels the
+  /// dialog or if the paths cannot be resolved, the method returns `null`.
+  Future<List<String>?> pickFileAndDirectoryPaths({
+    FileType type = FileType.any,
+    List<String>? allowedExtensions,
+    String? initialDirectory,
+  }) async =>
+      throw UnimplementedError(
+          'pickFileAndDirectoryPaths() has not been implemented.');
 
   /// Opens a save file dialog which lets the user select a file path and a file
   /// name to save a file.
