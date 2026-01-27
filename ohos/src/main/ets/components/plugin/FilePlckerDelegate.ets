@@ -356,7 +356,7 @@ export class FilePickerDelegate {
       this.finishWithAlreadyActiveError(result);
       return;
     }
-    if (!this.bytesList) {
+    if (!this.bytesList || this.bytesList.length == 0) {
       this.finishWithError("", "Bytes are required on HarmonyOS & Android & IOS when saving a file");
     }
 
@@ -539,6 +539,11 @@ export class FilePickerDelegate {
     }).catch((err: BusinessError) => {
       console.error('data:' + JSON.stringify(err));
     });
+  }
+
+  //
+  clearBytesList():void {
+   this.bytesList = [];
   }
 }
 
