@@ -24,9 +24,11 @@ import {
   BinaryMessenger,
 } from '@ohos/flutter_ohos';
 import { UIAbility } from '@kit.AbilityKit';
-import { FilePickerDelegate } from './FilePlckerDelegate'
-import List from '@ohos.util.List'
-import { FileUtils } from './FileUtils'
+import { FilePickerDelegate } from './FilePlckerDelegate';
+import List from '@ohos.util.List';
+import { FileUtils } from './FileUtils';
+import fs from '@ohos.file.fs';
+import { BusinessError } from '@kit.BasicServicesKit';
 
 /** FilePickerPlugin **/
 const CHANNEL: string = "miguelruivo.flutter.plugins.filepicker";
@@ -65,15 +67,29 @@ export default class FilePickerPlugin implements FlutterPlugin, MethodCallHandle
     this.setup(this.pluginBinding?.getBinaryMessenger() as BinaryMessenger, binding.getAbility(), binding);
   }
 
-  onMethodCall(call: MethodCall, result: MethodResult): void {
-    if (this.ability == null) {
+onMethodCall(call: MethodCall, result: MethodResult): void {
+    const clearAbility = this.ability;
+    if (clearAbility == null) {
       result.error("no_activity", "file picker plugin requires a foreground activity", null);
       return;
     }
     let args: Map<string, Object> = call.args;
     this.fileType = call.method;
     if (call.method != null && call.method === ("clear")) {
-      result.success(FileUtils.clearCache(this.ability));
+      if (this.delegate) {
+            this.delegate?.clearBytesList();//清除选中文件
+            }
+      const cachePath: string = clearAbility?.context?.cacheDir + "/file_picker"; // 自定义缓存路径
+      fs.access(cachePath).then((res: boolean) => {
+          if (res) {
+            result.success(FileUtils.clearCache(clearAbility));
+          } else {
+            result.success(true);
+          }
+      }).catch((err: BusinessError) => {
+          console.error("Failed to clear cache: " + err.message);
+          result.success(false);
+      })
       return;
     }
     if (call.method != null && call.method === ("save")) {
