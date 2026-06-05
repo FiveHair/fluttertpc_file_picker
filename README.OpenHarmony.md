@@ -18,8 +18,7 @@ Add the dependency in `pubspec.yaml`:
 dependencies:
   file_picker_ohos:
     git:
-      url: https://gitcode.com/openharmony-sig/fluttertpc_file_picker.git
-      path: ohos
+      url: https://gitcode.com/CPF-Flutter/fluttertpc_file_picker.git
 ```
 
 Execute Command:
@@ -208,23 +207,23 @@ final bool? cleaned = await FilePicker.platform.clearTemporaryFiles();
 ## Known Issues
 
 - [ ] ohos file picker selectMode setting does not work for folder
-  selection: [issue#14](https://gitcode.com/openharmony-sig/fluttertpc_file_picker/issues/14).
+  selection: [issue#14](https://gitcode.com/CPF-Flutter/fluttertpc_file_picker/issues/14).
 - [ ] When using flutter version 3.27 to reference this third-party library, you need to set a mandatory dependency on win32: ^5.0.0 in the project 'pubspec.yaml' file.
 
 ## FAQ
 
 1. `The current platform "ohos" is not supported by this plugin` is thrown.
    - Make sure you are using `file_picker_ohos` and importing `import 'package:file_picker_ohos/file_picker_ohos.dart';`.
-   - Related issue: [#23](https://gitcode.com/openharmony-sig/fluttertpc_file_picker/issues/23).
+   - Related issue: [#23](https://gitcode.com/CPF-Flutter/fluttertpc_file_picker/issues/23).
 2. Unclear how to integrate this plugin in a multi-platform project.
    - First verify OpenHarmony dependency points to the `ohos` subdirectory in this repository, then align dependency versions for other platforms.
-   - Related issues: [#16](https://gitcode.com/openharmony-sig/fluttertpc_file_picker/issues/16), [#26](https://gitcode.com/openharmony-sig/fluttertpc_file_picker/issues/26).
+   - Related issues: [#16](https://gitcode.com/CPF-Flutter/fluttertpc_file_picker/issues/16), [#26](https://gitcode.com/CPF-Flutter/fluttertpc_file_picker/issues/26).
 3. Directory selection behavior is different from expectation.
    - Some directory-mode capabilities are limited by device form factors. Validate on target hardware first.
-   - Related issue: [#14](https://gitcode.com/openharmony-sig/fluttertpc_file_picker/issues/14).
+   - Related issue: [#14](https://gitcode.com/CPF-Flutter/fluttertpc_file_picker/issues/14).
 4. `saveFile` throws `PlatformException(13900019, Is a directory, null, null)`.
    - Ensure a valid file name is provided and avoid passing a directory as a file path. If needed, retry without `initialDirectory`.
-   - Related issue: [#33](https://gitcode.com/openharmony-sig/fluttertpc_file_picker/issues/33).
+   - Related issue: [#33](https://gitcode.com/CPF-Flutter/fluttertpc_file_picker/issues/33).
 
 ## Directory Structure
 
@@ -245,7 +244,7 @@ fluttertpc_file_picker/
 
 ## How to Contribute
 
-If you find any problem when using file_picker, submit an [issue](https://gitcode.com/openharmony-sig/fluttertpc_file_picker/issues)or a [PR](https://gitcode.com/openharmony-sig/fluttertpc_file_picker/pulls).
+If you find any problem when using file_picker, submit an [issue](https://gitcode.com/CPF-Flutter/fluttertpc_file_picker/issues) or a [PR](https://gitcode.com/CPF-Flutter/fluttertpc_file_picker/pulls).
 
 ## License
 
