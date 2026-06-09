@@ -18,8 +18,7 @@
 dependencies:
   file_picker_ohos:
     git:
-      url: https://gitcode.com/openharmony-sig/fluttertpc_file_picker.git
-      path: ohos
+      url: https://gitcode.com/CPF-Flutter/fluttertpc_file_picker.git
 ```
 
 执行命令：
@@ -204,23 +203,23 @@ final bool? cleaned = await FilePicker.platform.clearTemporaryFiles();
 ## 遗留问题
 
 - [ ]  ohos 端 file picker selectMode
-  设置选文件夹无效: [issue#14](https://gitcode.com/openharmony-sig/fluttertpc_file_picker/issues/14)
+  设置选文件夹无效: [issue#14](https://gitcode.com/CPF-Flutter/fluttertpc_file_picker/issues/14)
 - [ ] 使用 flutter 3.27 版本引用该三方库时，需要在工程依赖文中设强制依赖 win32: ^5.0.0
 
 ## 常见问题
 
 1. 出现 `The current platform "ohos" is not supported by this plugin`。
    - 请确认引入的是 `file_picker_ohos`，并使用 `import 'package:file_picker_ohos/file_picker_ohos.dart';`。
-   - 参考 issue: [#23](https://gitcode.com/openharmony-sig/fluttertpc_file_picker/issues/23)。
+   - 参考 issue: [#23](https://gitcode.com/CPF-Flutter/fluttertpc_file_picker/issues/23)。
 2. 不清楚如何在多平台工程中引入。
    - 建议先验证 OpenHarmony 端依赖是否指向本仓库 `ohos` 子目录，再统一整理多平台依赖版本。
-   - 参考 issue: [#16](https://gitcode.com/openharmony-sig/fluttertpc_file_picker/issues/16), [#26](https://gitcode.com/openharmony-sig/fluttertpc_file_picker/issues/26)。
+   - 参考 issue: [#16](https://gitcode.com/CPF-Flutter/fluttertpc_file_picker/issues/16), [#26](https://gitcode.com/CPF-Flutter/fluttertpc_file_picker/issues/26)。
 3. 目录选择能力与预期不一致。
    - 部分目录模式能力受设备形态限制，请先在目标设备上验证。
-   - 参考 issue: [#14](https://gitcode.com/openharmony-sig/fluttertpc_file_picker/issues/14)。
+   - 参考 issue: [#14](https://gitcode.com/CPF-Flutter/fluttertpc_file_picker/issues/14)。
 4. `saveFile` 报错 `PlatformException(13900019, Is a directory, null, null)`。
    - 请确认传入了有效文件名，不要将目录路径当作文件路径使用；必要时去掉 `initialDirectory` 后重试。
-   - 参考 issue: [#33](https://gitcode.com/openharmony-sig/fluttertpc_file_picker/issues/33)。
+   - 参考 issue: [#33](https://gitcode.com/CPF-Flutter/fluttertpc_file_picker/issues/33)。
 
 ## 目录结构
 
@@ -240,7 +239,7 @@ fluttertpc_file_picker/
 
 ## 贡献代码
 
-使用过程中发现任何问题都可以提 [Issue](https://gitcode.com/openharmony-sig/fluttertpc_file_picker/issues) ，当然，也非常欢迎发 [PR](https://gitcode.com/openharmony-sig/fluttertpc_file_picker/pulls) 共建。
+使用过程中发现任何问题都可以提 [Issue](https://gitcode.com/CPF-Flutter/fluttertpc_file_picker/issues) ，当然，也非常欢迎发 [PR](https://gitcode.com/CPF-Flutter/fluttertpc_file_picker/pulls) 共建。
 
 ## 开源协议
 
