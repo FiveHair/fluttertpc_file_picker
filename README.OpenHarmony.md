@@ -19,6 +19,8 @@ dependencies:
   file_picker_ohos:
     git:
       url: https://gitcode.com/CPF-Flutter/fluttertpc_file_picker.git
+      # ref: 10.3.8-ohos-1.0.0
+      ref: x.x.x-ohos-x.x.x # Please select the TAG to the TAG Version Mapping
 ```
 
 Execute Command:
@@ -26,6 +28,15 @@ Execute Command:
 ```bash
 flutter pub get
 ```
+
+#### TAG Version Mapping
+
+| Flutter Framework Version | TAG                      | Branch |
+|---------------------------|--------------------------|--------|
+| 3.7                       | 10.2.0-ohos-1.0.0-beta.1 | [br_v10.2.0_ohos](https://gitcode.com/CPF-Flutter/fluttertpc_file_picker/tree/br_v10.2.0_ohos) |
+| 3.22                      | 10.2.0-ohos-1.0.0-beta.1 | [br_v10.2.0_ohos](https://gitcode.com/CPF-Flutter/fluttertpc_file_picker/tree/br_v10.2.0_ohos) |
+| 3.27                      | 10.2.0-ohos-1.0.0-beta.1 | [br_v10.2.0_ohos](https://gitcode.com/CPF-Flutter/fluttertpc_file_picker/tree/br_v10.2.0_ohos) |
+| 3.35                      | 10.3.8-ohos-1.0.0        | [br_v10.3.8_ohos](https://gitcode.com/CPF-Flutter/fluttertpc_file_picker/tree/br_v10.3.8_ohos) |
 
 > Note: If your project targets Android, iOS, and OpenHarmony at the same time, make sure dependency sources are aligned across platforms. Do not mix in package versions that do not include OpenHarmony adaptation.
 

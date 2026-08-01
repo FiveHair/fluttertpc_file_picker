@@ -19,6 +19,8 @@ dependencies:
   file_picker_ohos:
     git:
       url: https://gitcode.com/CPF-Flutter/fluttertpc_file_picker.git
+      # ref: 10.3.8-ohos-1.0.0
+      ref: x.x.x-ohos-x.x.x # 请根据下方TAG版本对应表选择TAG
 ```
 
 执行命令：
@@ -26,6 +28,15 @@ dependencies:
 ```bash
 flutter pub get
 ```
+
+#### TAG 版本对应表
+
+| Flutter 框架版本 | TAG                      | 分支     |
+|-----------------|--------------------------|---------|
+| 3.7             | 10.2.0-ohos-1.0.0-beta.1 | [br_v10.2.0_ohos](https://gitcode.com/CPF-Flutter/fluttertpc_file_picker/tree/br_v10.2.0_ohos)  |
+| 3.22            | 10.2.0-ohos-1.0.0-beta.1 | [br_v10.2.0_ohos](https://gitcode.com/CPF-Flutter/fluttertpc_file_picker/tree/br_v10.2.0_ohos)  |
+| 3.27            | 10.2.0-ohos-1.0.0-beta.1 | [br_v10.2.0_ohos](https://gitcode.com/CPF-Flutter/fluttertpc_file_picker/tree/br_v10.2.0_ohos)  |
+| 3.35            | 10.3.8-ohos-1.0.0        | [br_v10.3.8_ohos](https://gitcode.com/CPF-Flutter/fluttertpc_file_picker/tree/br_v10.3.8_ohos)  |
 
 ## 约束与限制
 
