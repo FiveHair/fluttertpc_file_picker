@@ -3,7 +3,6 @@
 #
 Pod::Spec.new do |s|
   s.name                  = 'file_picker_ohos'
-  s.header_dir            = 'file_picker'
   s.version               = '0.0.1'
   s.summary               = 'A flutter plugin to show native file picker dialogs'
   s.description           = <<-DESC
@@ -15,7 +14,6 @@ A flutter plugin to show native file picker dialogs.
   s.source                = { :path => '.' }
   s.source_files          = 'file_picker/Sources/**/*.{m,h}'
   s.public_header_files   = 'file_picker/Sources/file_picker/include/**/*.h'
-  s.module_map            = 'file_picker/Sources/file_picker/include/file_picker.modulemap'
   
   s.ios.deployment_target = '12.0'
 
